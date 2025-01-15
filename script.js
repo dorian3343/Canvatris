@@ -20,14 +20,15 @@ function start() {
                 }
                 break;
             case "ArrowDown":
-                if (gameObj.y * sizeMultiplier < sizeMultiplier * col - 1) {
+                if (gameObj.y < col - 1 && gameBoard[gameObj.y+1][gameObj.x] === false) {
                     gameObj.y += 1;
                 } else {
-                    gameBoard[gameObj.y / sizeMultiplier][gameObj.x / sizeMultiplier] = true;
+                    gameBoard[gameObj.y][gameObj.x] = true;
                     gameObj.x = 0;
                     gameObj.y = 0;
                 }
                 break;
+
         }
     });
 
@@ -48,15 +49,15 @@ function DrawState(obj, debugElement, gameBoard) {
             }
         }
     }
-
     debugElement.textContent = `Y Position: ${obj.y}  X Position: ${obj.x}`;
     if (obj.frameCount % 40 === 0) {
-        if (obj.y*sizeMultiplier < sizeMultiplier*col-1) {
+        if (obj.y < col - 1 && gameBoard[obj.y+1][obj.x] === false) {
             obj.y += 1;
         } else {
-            gameBoard[obj.y / sizeMultiplier][obj.x / sizeMultiplier] = true;
+            gameBoard[obj.y][obj.x] = true;
             obj.x = 0;
             obj.y = 0;
         }
     }
+
 }

@@ -1,40 +1,62 @@
+const sizeMultiplier = 50
+const col = 17
+const row = 11
 function start() {
+    const gameBoard = Array.from({ length: col }, () => Array(row).fill(false));
     const canvas = document.getElementById("canvas");
     const debugElement = document.getElementById("debug");
     let gameObj = { x: 0, y: 0, canvas: canvas, frameCount: 0 };
-    gameBoard = [[],[],[],[],[]]
+
     document.addEventListener('keydown', function (ev) {
-        if (ev.key === "ArrowRight") {
-            if (gameObj.x !== 550) {
-                gameObj.x += 50;
-            }
-        }
-        if (ev.key === "ArrowLeft") {
-            if (gameObj.x !== 0) {
-                gameObj.x -= 50;
-            }
-        }
-        if (ev.key === "ArrowDown") {
-            if (gameObj.y !== 850) {
-                gameObj.y += 10;
-            }
+        switch (ev.key) {
+            case "ArrowRight":
+                if (gameObj.x * sizeMultiplier < sizeMultiplier * row - 1) {
+                    gameObj.x += 1;
+                }
+                break;
+            case "ArrowLeft":
+                if (gameObj.x > 0) {
+                    gameObj.x -= 1;
+                }
+                break;
+            case "ArrowDown":
+                if (gameObj.y * sizeMultiplier < sizeMultiplier * col - 1) {
+                    gameObj.y += 1;
+                } else {
+                    gameBoard[gameObj.y / sizeMultiplier][gameObj.x / sizeMultiplier] = true;
+                    gameObj.x = 0;
+                    gameObj.y = 0;
+                }
+                break;
         }
     });
 
-    setInterval(() => DrawState(gameObj, debugElement), 33);
+
+    setInterval(() => DrawState(gameObj, debugElement, gameBoard), 33);
 }
 
-function DrawState(obj, debugElement) {
+function DrawState(obj, debugElement, gameBoard) {
     obj.frameCount++;
     const context = obj.canvas.getContext('2d');
-    context.clearRect(0, 0, obj.canvas.width, obj.canvas.height); // Clear the canvas
-    context.fillRect(obj.x, obj.y, 50, 50); // Draw a rectangle
+    context.clearRect(0, 0, obj.canvas.width, obj.canvas.height);
+    context.fillRect(obj.x*sizeMultiplier, obj.y*sizeMultiplier, sizeMultiplier, sizeMultiplier);
 
-    debugElement.textContent = `Y Position: ${obj.y}`;
+    for (let i = 0; i < gameBoard.length; i++) {
+        for (let j = 0; j < gameBoard[i].length; j++) {
+            if (gameBoard[i][j]) {
+                context.fillRect((j * sizeMultiplier), (i * sizeMultiplier)+sizeMultiplier, sizeMultiplier, sizeMultiplier);
+            }
+        }
+    }
 
+    debugElement.textContent = `Y Position: ${obj.y}  X Position: ${obj.x}`;
     if (obj.frameCount % 40 === 0) {
-        if (obj.y !== 850) {
-            obj.y += 50;
+        if (obj.y*sizeMultiplier < sizeMultiplier*col-1) {
+            obj.y += 1;
+        } else {
+            gameBoard[obj.y / sizeMultiplier][obj.x / sizeMultiplier] = true;
+            obj.x = 0;
+            obj.y = 0;
         }
     }
 }
